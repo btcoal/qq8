@@ -9,3 +9,4 @@ Static publication site for [qqeight.com](https://www.qqeight.com), hosted on Gi
 - `404.html` — custom not-found page
 - `CNAME` — custom domain configuration (`www.qqeight.com`)
 - `.nojekyll` — disables Jekyll processing on GitHub Pages
+- `.agents/skills/qq8-editorial/` — `qq8` editorial, design, and verification skill for agents
