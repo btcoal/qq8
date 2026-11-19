@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blackwell GPU Fingerprints and Washington’s Remote Access Crackdown — qq8</title>
-  <meta name="description" content="After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, Washington is moving to seal the overseas cloud loophole.">
+  <meta name="description" content="As Washington moves to seal the overseas cloud loophole for export-controlled Nvidia Blackwell chips, independent checkpoint forensics shows that DeepSeek, Moonshot AI, MiniMax, and Ant Group already initialized their newest frontier models on Blackwell hardware.">
   <link rel="canonical" href="https://www.qqeight.com/ghost-in-the-weights/">
   <meta property="og:site_name" content="qq8">
   <meta property="og:type" content="article">
   <meta property="og:title" content="Blackwell GPU Fingerprints and Washington’s Remote Access Crackdown">
-  <meta property="og:description" content="After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, Washington is moving to seal the overseas cloud loophole.">
+  <meta property="og:description" content="As Washington moves to seal the overseas cloud loophole for export-controlled Nvidia Blackwell chips, independent checkpoint forensics shows that DeepSeek, Moonshot AI, MiniMax, and Ant Group already initialized their newest frontier models on Blackwell hardware.">
   <meta property="og:url" content="https://www.qqeight.com/ghost-in-the-weights/">
   <meta property="og:image" content="https://www.qqeight.com/ghost-in-the-weights/images/nvidia-b200-gpu.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -707,7 +707,7 @@
       <div class="kicker-row">Semiconductor Statecraft &amp; Export Controls</div>
       <h1>Blackwell GPU Fingerprints and Washington’s Remote Access Crackdown</h1>
       <p class="standfirst">
-        After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, a divided Trump administration is moving to seal the overseas data-centre loophole—and putting five transit hubs on notice.
+        Amid mounting signs that Chinese labs are accessing prohibited Nvidia Blackwell silicon abroad, a divided Trump administration is moving to seal the overseas data-centre loophole and put five transit hubs on notice. Days earlier, independent checkpoint forensics surfaced public evidence of Blackwell hardware inside frontier models from DeepSeek, Moonshot AI, MiniMax, and Ant Group.
       </p>
       <div class="meta-bar">
         <div class="meta-primary">
@@ -759,7 +759,7 @@
         </p>
 
         <p>
-          On November 12th 2026, Will DePue, a researcher at Unemployment Labs, supplied the missing forensic link (<a href="https://unemploymentlabs.com/checkpoint-forensics" target="_blank" rel="noopener">Unemployment Labs report</a>; <a href="https://x.com/willdepue/status/2120992457630326841" target="_blank" rel="noopener">post on X</a>). Working solely from publicly released model weights—the billions of adjustable parameters that govern a neural network’s behaviour—Mr DePue found compelling statistical signatures that six frontier models released since April 2026 by DeepSeek, Moonshot AI, MiniMax, and Ant Group were initialized on export-controlled Blackwell hardware. Across five training runs, he estimated, those four Chinese labs had tapped roughly 12,000 Blackwell GPUs, the computational equivalent of 30,000 previous-generation Nvidia <code>H100</code> chips, representing more than half a billion dollars in silicon for the final runs alone.
+          On November 12th 2026, Will DePue, a researcher at Unemployment Labs, published detailed forensic evidence (<a href="https://unemploymentlabs.com/checkpoint-forensics" target="_blank" rel="noopener">Unemployment Labs report</a>; <a href="https://x.com/willdepue/status/2120992457630326841" target="_blank" rel="noopener">post on X</a>). Working solely from publicly released model weights—the billions of adjustable parameters that govern a neural network’s behaviour—Mr DePue found compelling statistical signatures that six frontier models released since April 2026 by DeepSeek, Moonshot AI, MiniMax, and Ant Group were initialized on export-controlled Blackwell hardware. Across five training runs, he estimated, those four Chinese labs had tapped roughly 12,000 Blackwell GPUs, the computational equivalent of 30,000 previous-generation Nvidia <code>H100</code> chips, representing more than half a billion dollars in silicon for the final runs alone.
         </p>
 
         <blockquote class="pullquote">
@@ -768,7 +768,7 @@
         </blockquote>
 
         <p>
-          Three days later, Washington moved to render that distinction moot. On November 15th, the Department of Commerce’s Bureau of Industry and Security, or BIS, issued a 132-page Interim Final Rule, abbreviated IFR, titled <a href="https://media.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener"><em>Addressing Remote Access to Advanced Semiconductors</em></a> and carrying Regulation Identifier Number <code>RIN 0694-AK50</code>. Taking effect immediately upon Federal Register publication with a 60-day comment window, the rule overhauls the Export Administration Regulations—the EAR—that govern American dual-use trade.
+          Three days later, a federal crackdown already months in the making rendered that distinction moot. On November 15th, the Department of Commerce’s Bureau of Industry and Security, or BIS, issued a 132-page Interim Final Rule, abbreviated IFR, titled <a href="https://media.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener"><em>Addressing Remote Access to Advanced Semiconductors</em></a> and carrying Regulation Identifier Number <code>RIN 0694-AK50</code>. Taking effect immediately upon Federal Register publication with a 60-day comment window, the rule overhauls the Export Administration Regulations—the EAR—that govern American dual-use trade.
         </p>
 
         <p>
@@ -786,7 +786,7 @@
         <h2 id="forensics">The ghost in the weights: how 148 and 152 cores gave the game away</h2>
 
         <p>
-          To understand why Treasury and the National Security Council forced BIS into the cloud, it helps to see what Mr DePue found inside China’s open weights.
+          To grasp the scale of the problem Washington is trying to contain, it helps to see what Mr DePue independently found inside China’s open weights.
         </p>
 
         <p>
@@ -1109,7 +1109,7 @@
         </div>
 
         <p>
-          The irony is hard to miss. The architects of the AI Diffusion Rule feared that open or leaked model weights would hand adversaries a shortcut around American silicon. Instead, when DeepSeek, Moonshot AI, MiniMax, and Ant Group released the open weights of <code>DeepSeek-V4</code>, <code>Kimi K3</code>, <code>MiniMax-M3</code>, and <code>Ling-3.1-flash</code>, those very weights became the forensic confession that exposed their 148-SM and 152-SM Blackwell clusters—and brought Washington’s export-control dragnet crashing down on the global cloud.
+          Taken together, the November 15th rule marks a sharp strategic pivot. Rather than policing software artifacts like model weights or administering a global quota map, Washington is betting everything on controlling physical compute—from the foundry floor to the overseas cloud rack. Whether that bet holds now hinges on three tests: whether BIS’s stretch of ECRA survives legal challenge, whether hubs from Malaysia to Brazil enforce the line, and whether Washington fixes the rule’s drafting contradictions before the 90-day clock expires.
         </p>
       </div>
     </main>
