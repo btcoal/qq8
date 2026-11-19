@@ -119,6 +119,7 @@ Every article `<head>` should include canonical, Open Graph, Twitter Card tags, 
   * Right (`.masthead-right`): `.nav-links` (always ending with `<a href="#sources">Sources</a>`, never `Documents`) + `.controls-group` containing `#widthDefaultBtn`, `#widthWideBtn`, and `#darkModeBtn`.
 * **Header (`.article-header`):** `.kicker-row` (square blue mark via `::before`), `<h1>`, `.standfirst`, `.meta-bar` (`By <strong>qq8 Staff</strong>`, `Published`, `Reading time`).
 * **Body column (`.content-col`):** `max-width: var(--layout-width)` unified across prose `<p>`, `.figure-block` (single `<figure>` or two-up `.figure-grid`), `blockquote.pullquote`, `.table-card` (`tabular-nums`), and `.callout-box`.
+* **Inline typography:** Do not wrap technical terms, chip/model names (such as `H100` or `B200`), or regulatory codes in inline `<code>` tags; keep monospace formatting strictly for genuine `<pre><code>` code blocks.
 * **Sources (`.sources-section#sources`):** Heading `<h2>Primary Sources &amp; Technical References</h2>`, responsive `.sources-grid` of `.source-card` items linking directly to canonical external URLs.
 * **Footer (`.site-footer`):**
   ```html

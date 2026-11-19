@@ -27,6 +27,7 @@ Follow this standard when drafting, editing, or publishing long-form analytical 
 * **Familiar place names and acronyms:** Use common country names (`China`, `United States`, `United Arab Emirates` or `UAE`). Avoid formal acronyms like `PRC` or `People's Republic of China`, and do not spell out obvious country abbreviations.
 * **Oxford comma:** Use the serial (Oxford) comma consistently in every series of three or more items (`A, B, and C`).
 * **Sparse, semantic boldface:** Never scatter emboldened keywords across body paragraphs for skimming. Reserve `<strong>` in running body text for at most a handful of genuine semantic emphases.
+* **No inline code formatting on technical terms:** Never wrap chip or model names (`H100`, `B200`, `GB200`, `DeepSeek-V4`, `Kimi K3`), regulatory codes (`ECCN 3A090.a`, `RIN 0694-AK50`), metrics, libraries, handles, or URLs in markdown backticks or inline `<code>` tags; reserve `<code>` strictly for genuine code snippets inside `<pre><code>`.
 * **Plain-English legal citations:** Do not clutter prose with statutory or code section citations (`§ 744.24(a)(1)`, `15 CFR`, `50 U.S.C.`, `Supplement No. 1`, `Note 2`). Explain legal triggers, rules, and exceptions clearly while keeping substantive identifiers readers or practitioners actually look up (such as `RIN` numbers and `ECCN` codes).
 
 ## 3. Epistemic Rigor, Attribution & Causality

@@ -47,6 +47,10 @@ class PageInspector(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.in_style = False
         self.in_script = False
+        self.in_pre = 0
+        self.in_inline_code = 0
+        self.current_code_chunks: list[str] = []
+        self.inline_code_snippets: list[str] = []
         self.in_article_or_main = 0
         self.body_tag_depth = 0
 
@@ -78,6 +82,12 @@ class PageInspector(HTMLParser):
             self.in_style = True
         elif tag == "script":
             self.in_script = True
+        elif tag == "pre":
+            self.in_pre += 1
+        elif tag == "code" and self.in_pre == 0 and not self.in_style and not self.in_script:
+            if self.in_inline_code == 0:
+                self.current_code_chunks = []
+            self.in_inline_code += 1
         elif tag == "body":
             self.body_tag_depth += 1
 
@@ -127,6 +137,14 @@ class PageInspector(HTMLParser):
             self.in_style = False
         elif tag == "script":
             self.in_script = False
+        elif tag == "pre" and self.in_pre > 0:
+            self.in_pre -= 1
+        elif tag == "code" and self.in_inline_code > 0:
+            self.in_inline_code -= 1
+            if self.in_inline_code == 0:
+                snippet = " ".join("".join(self.current_code_chunks).split())
+                self.inline_code_snippets.append(snippet)
+                self.current_code_chunks = []
         elif tag == "body" and self.body_tag_depth > 0:
             self.body_tag_depth -= 1
 
@@ -157,6 +175,8 @@ class PageInspector(HTMLParser):
         if self.in_style or self.in_script:
             return
         self.visible_text_chunks.append(data)
+        if self.in_inline_code > 0:
+            self.current_code_chunks.append(data)
         if self.in_p:
             self.current_p_chunks.append(data)
 
@@ -232,6 +252,13 @@ def check_file(html_path: Path, repo_root: Path) -> tuple[list[str], list[str]]:
     if inspector.list_tags_in_content:
         found = ", ".join(sorted(set(inspector.list_tags_in_content)))
         errors.append(f"list markup inside article/main is forbidden: {found}")
+
+    if inspector.inline_code_snippets:
+        samples = ", ".join(repr(s) for s in inspector.inline_code_snippets[:4] if s)
+        detail = f"; e.g. {samples}" if samples else ""
+        errors.append(
+            f"inline <code> tag outside <pre> block is forbidden ({len(inspector.inline_code_snippets)} found{detail}; do not wrap technical terms like H100 in backticks/<code>)"
+        )
 
     for label, pat in RAW_SECTION_PATTERNS:
         if pat.search(visible_text):
