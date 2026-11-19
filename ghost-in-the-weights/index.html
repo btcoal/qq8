@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The ghost in the weights: how forensic evidence of Chinese Blackwell clusters triggered Washington’s cloud crackdown — qq8</title>
+  <meta name="description" content="After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, Washington is moving to seal the overseas cloud loophole.">
+  <link rel="canonical" href="https://www.qqeight.com/ghost-in-the-weights/">
+  <meta property="og:site_name" content="qq8">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="The ghost in the weights: how forensic evidence of Chinese Blackwell clusters triggered Washington’s cloud crackdown">
+  <meta property="og:description" content="After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, Washington is moving to seal the overseas cloud loophole.">
+  <meta property="og:url" content="https://www.qqeight.com/ghost-in-the-weights/">
+  <meta property="og:image" content="https://www.qqeight.com/ghost-in-the-weights/images/nvidia-b200-gpu.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' fill='%23fff' font-family='Helvetica Neue,Arial,sans-serif' font-weight='900' font-size='28' letter-spacing='-1'%3Eqq8%3C/text%3E%3C/svg%3E">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("qq8-theme") === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+        if (localStorage.getItem("qq8-width") === "wide") {
+          document.documentElement.setAttribute("data-width", "wide");
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <style>
+    :root {
+      --bg-paper: #ffffff;
+      --bg-card: #f7f8fa;
+      --bg-surface: #ffffff;
+      --bg-code: #f1f3f5;
+      --bg-table-alt: #f8f9fb;
+      --ink-primary: #000000;
+      --ink-body: #1f2328;
+      --ink-muted: #596068;
+      --ink-sub: #40454c;
+      --ink-code: #111827;
+      --accent-blue: #0274b6;
+      --accent-blue-dark: #004e7c;
+      --border-rule: #d0d5dd;
+      --border-light: #e5e7eb;
+      --border-code: #e2e6eb;
+      --progress-track: #eceef2;
+      --btn-bg: #f7f8fa;
+      --btn-active-bg: #000000;
+      --btn-active-ink: #ffffff;
+      --font-serif: "Georgia", "Times New Roman", "Iowan Old Style", serif;
+      --font-sans: "Helvetica Neue", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+      --layout-width: 820px;
+    }
+
+    html[data-width="wide"] {
+      --layout-width: 1240px;
+    }
+
+    html[data-theme="dark"] {
+      --bg-paper: #0d1014;
+      --bg-card: #161b22;
+      --bg-surface: #12161c;
+      --bg-code: #1d242e;
+      --bg-table-alt: #141920;
+      --ink-primary: #f3f5f8;
+      --ink-body: #d5dce4;
+      --ink-muted: #939eab;
+      --ink-sub: #b4bec9;
+      --ink-code: #e6edf3;
+      --accent-blue: #4aa8ff;
+      --accent-blue-dark: #7ec2ff;
+      --border-rule: #2d3643;
+      --border-light: #222933;
+      --border-code: #2c3542;
+      --progress-track: #1c2128;
+      --btn-bg: #161b22;
+      --btn-active-bg: #f3f5f8;
+      --btn-active-ink: #0d1014;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--bg-paper);
+      color: var(--ink-body);
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-paper);
+      color: var(--ink-body);
+      font-family: var(--font-serif);
+      font-size: 18.5px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background-color 0.18s ease, color 0.18s ease;
+    }
+
+    /* Reading progress bar */
+    .progress-track {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--progress-track);
+      z-index: 1000;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-blue);
+      transition: width 0.08s linear;
+    }
+
+    /* Masthead */
+    .masthead {
+      border-top: 4px solid var(--ink-primary);
+      border-bottom: 1px solid var(--ink-primary);
+      background: var(--bg-paper);
+    }
+
+    .masthead-inner {
+      max-width: var(--layout-width);
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px 20px;
+      font-family: var(--font-sans);
+      transition: max-width 0.2s ease;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+
+    .brand-name {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--ink-primary);
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .brand-name:hover {
+      color: var(--accent-blue);
+    }
+
+    .brand-section {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      border-left: 1px solid var(--border-rule);
+      padding-left: 12px;
+    }
+
+    .masthead-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      padding-bottom: 2px;
+      transition: color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--ink-primary);
+      border-bottom-color: var(--accent-blue);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .segmented-toggle {
+      display: inline-flex;
+      border: 1px solid var(--border-rule);
+      border-radius: 3px;
+      overflow: hidden;
+      background: var(--btn-bg);
+    }
+
+    .toggle-btn {
+      appearance: none;
+      border: none;
+      background: var(--btn-bg);
+      color: var(--ink-muted);
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .toggle-btn:hover {
+      color: var(--ink-primary);
+    }
+
+    .toggle-btn[aria-pressed="true"] {
+      background: var(--btn-active-bg);
+      color: var(--btn-active-ink);
+    }
+
+    .standalone-toggle {
+      border: 1px solid var(--border-rule);
+      border-radius: 3px;
+    }
+
+    /* Article Header */
+    .article-header {
+      max-width: var(--layout-width);
+      margin: 40px auto 28px;
+      padding: 0 24px;
+      transition: max-width 0.2s ease;
+    }
+
+    .kicker-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+    }
+
+    .kicker-row::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background: var(--accent-blue);
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-family: var(--font-sans);
+      font-size: clamp(2.15rem, 4.3vw, 3.05rem);
+      line-height: 1.1;
+      font-weight: 800;
+      letter-spacing: -0.028em;
+      color: var(--ink-primary);
+    }
+
+    .standfirst {
+      margin: 0 0 24px;
+      font-family: var(--font-serif);
+      font-size: 1.24rem;
+      line-height: 1.5;
+      color: var(--ink-sub);
+      font-weight: 400;
+    }
+
+    .meta-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 20px;
+      padding: 13px 0;
+      border-top: 2px solid var(--ink-primary);
+      border-bottom: 1px solid var(--border-rule);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      color: var(--ink-muted);
+    }
+
+    .meta-primary {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px 14px;
+    }
+
+    .meta-primary strong {
+      color: var(--ink-primary);
+    }
+
+    .meta-sep {
+      color: var(--border-rule);
+    }
+
+    /* Main Layout — unified column width */
+    main {
+      padding-bottom: 72px;
+    }
+
+    .content-col {
+      max-width: var(--layout-width);
+      margin: 0 auto;
+      padding: 0 24px;
+      transition: max-width 0.2s ease;
+    }
+
+    .figure-block {
+      margin: 34px 0;
+    }
+
+    p {
+      margin: 0 0 1.32em;
+    }
+
+    .dropcap::first-letter {
+      float: left;
+      font-family: var(--font-serif);
+      font-size: 4.1rem;
+      line-height: 0.82;
+      padding-top: 6px;
+      padding-right: 11px;
+      padding-bottom: 2px;
+      font-weight: 700;
+      color: var(--ink-primary);
+    }
+
+    a {
+      color: var(--accent-blue);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+
+    a:hover {
+      color: var(--accent-blue-dark);
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.83em;
+      background: var(--bg-code);
+      color: var(--ink-code);
+      padding: 2px 5px;
+      border-radius: 2px;
+      border: 1px solid var(--border-code);
+    }
+
+    h2 {
+      margin: 2.3em 0 0.8em;
+      padding-top: 0.85em;
+      border-top: 3px solid var(--ink-primary);
+      border-bottom: 1px solid var(--border-light);
+      padding-bottom: 0.4em;
+      font-family: var(--font-sans);
+      font-size: 1.48rem;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1.24;
+      color: var(--ink-primary);
+    }
+
+    h3 {
+      margin: 1.75em 0 0.55em;
+      font-family: var(--font-sans);
+      font-size: 1.06rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--ink-primary);
+    }
+
+    /* Figures */
+    figure {
+      margin: 0;
+    }
+
+    .figure-frame {
+      background: #050505;
+      border: 1px solid var(--border-rule);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .figure-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: 560px;
+      object-fit: contain;
+    }
+
+    .figure-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .figure-grid figure {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .figure-grid .figure-frame {
+      aspect-ratio: 16 / 9;
+    }
+
+    .figure-grid .figure-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    figcaption {
+      margin-top: 10px;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--ink-muted);
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-rule);
+    }
+
+    figcaption strong {
+      color: var(--ink-primary);
+    }
+
+    /* Pull Quote & Callout */
+    blockquote.pullquote {
+      margin: 34px 0;
+      padding: 18px 22px;
+      border-top: 2px solid var(--ink-primary);
+      border-bottom: 1px solid var(--border-rule);
+      background: var(--bg-paper);
+      font-family: var(--font-serif);
+      font-size: 1.18rem;
+      line-height: 1.56;
+      color: var(--ink-primary);
+    }
+
+    blockquote.pullquote footer {
+      margin-top: 10px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-muted);
+    }
+
+    .callout-box {
+      margin: 32px 0;
+      padding: 20px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-rule);
+      border-top: 3px solid var(--ink-primary);
+    }
+
+    .callout-title {
+      margin: 0 0 12px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-primary);
+    }
+
+    .callout-box p {
+      font-size: 0.96rem;
+      margin-bottom: 0.95em;
+    }
+
+    .callout-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Tables */
+    .table-card {
+      margin: 36px 0;
+      background: var(--bg-paper);
+      border-top: 3px solid var(--ink-primary);
+      border-bottom: 2px solid var(--ink-primary);
+      padding: 18px 0 16px;
+    }
+
+    .table-header {
+      margin-bottom: 14px;
+      font-family: var(--font-sans);
+    }
+
+    .table-eyebrow {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 4px;
+    }
+
+    .table-title {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--ink-primary);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.48;
+      text-align: left;
+    }
+
+    thead th {
+      background: var(--bg-paper);
+      color: var(--ink-primary);
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 10px 12px;
+      border-top: 1px solid var(--border-rule);
+      border-bottom: 2px solid var(--ink-primary);
+      vertical-align: bottom;
+    }
+
+    tbody td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--bg-table-alt);
+    }
+
+    .table-note {
+      margin: 12px 0 0;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: var(--ink-muted);
+    }
+
+    /* Footer Sources */
+    .sources-section {
+      max-width: var(--layout-width);
+      margin: 56px auto 0;
+      padding: 26px 24px 0;
+      border-top: 3px solid var(--ink-primary);
+      font-family: var(--font-sans);
+      transition: max-width 0.2s ease;
+    }
+
+    .sources-section h2 {
+      margin-top: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      border-top: none;
+      border-bottom: none;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--ink-primary);
+    }
+
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .source-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-rule);
+      border-top: 2px solid var(--ink-primary);
+      padding: 16px 18px;
+      font-size: 13.5px;
+      line-height: 1.5;
+    }
+
+    .source-card .source-kind {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      margin-bottom: 6px;
+    }
+
+    .source-card strong {
+      display: block;
+      color: var(--ink-primary);
+      margin-bottom: 6px;
+      font-size: 14.5px;
+    }
+
+    .source-card p {
+      margin: 0 0 10px;
+      color: var(--ink-muted);
+    }
+
+    .site-footer {
+      max-width: var(--layout-width);
+      margin: 28px auto 0;
+      padding: 16px 24px 48px;
+      border-top: 1px solid var(--border-light);
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      color: var(--ink-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      transition: max-width 0.2s ease;
+    }
+
+    @media (max-width: 780px) {
+      body {
+        font-size: 17.5px;
+      }
+      .figure-grid {
+        grid-template-columns: 1fr;
+      }
+      .article-header {
+        margin-top: 28px;
+      }
+      .dropcap::first-letter {
+        font-size: 3.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-track" aria-hidden="true">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand-mark">
+        <a class="brand-name" href="../">qq8</a>
+        <span class="brand-section">Silicon Without Borders</span>
+      </div>
+      <div class="masthead-right">
+        <nav class="nav-links" aria-label="Article sections">
+          <a href="#forensics">Checkpoint Forensics</a>
+          <a href="#cloud-ban">Cloud Ban</a>
+          <a href="#gang-of-five">The Five Hubs</a>
+          <a href="#foundry-gate">Foundry Gate</a>
+          <a href="#ai-diffusion">AI Diffusion Repeal</a>
+          <a href="#sources">Sources</a>
+        </nav>
+        <div class="controls-group">
+          <div class="segmented-toggle" role="group" aria-label="Page width">
+            <button type="button" class="toggle-btn" id="widthDefaultBtn" aria-pressed="true">Default</button>
+            <button type="button" class="toggle-btn" id="widthWideBtn" aria-pressed="false">Wide</button>
+          </div>
+          <button type="button" class="toggle-btn standalone-toggle" id="darkModeBtn" aria-pressed="false">Dark Mode</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <article>
+    <header class="article-header">
+      <div class="kicker-row">Semiconductor Statecraft &amp; Export Controls</div>
+      <h1>The ghost in the weights: how forensic evidence of Chinese Blackwell clusters triggered Washington’s cloud crackdown</h1>
+      <p class="standfirst">
+        After checkpoint forensics showed that DeepSeek, Moonshot AI, MiniMax, and Ant Group initialized their newest frontier models on export-controlled Nvidia Blackwell chips, a divided Trump administration is moving to seal the overseas data-centre loophole—and putting five transit hubs on notice.
+      </p>
+      <div class="meta-bar">
+        <div class="meta-primary">
+          <span>By <strong>qq8 Staff</strong></span>
+          <span class="meta-sep">•</span>
+          <span><strong>Published:</strong> November 18, 2026</span>
+          <span class="meta-sep">•</span>
+          <span><strong>Reading time:</strong> ~12 min</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="content-col">
+        <div class="figure-block" style="margin-top: 12px;">
+          <figure>
+            <div class="figure-frame">
+              <img src="images/nvidia-b200-gpu.jpg" alt="Nvidia Blackwell B200 GPU package showing dual logic dies and eight HBM stacks">
+            </div>
+            <figcaption>
+              <strong>The object of desire:</strong> Nvidia’s Blackwell <code>B200</code> processor package (Export Control Classification Number, or <code>ECCN</code>, <code>3A090.a</code>), fusing two reticle-limit Taiwan Semiconductor Manufacturing Company (TSMC) logic dies (148 active Streaming Multiprocessors, or SMs) flanked by eight stacks of High-Bandwidth Memory (HBM, <code>ECCN 3A090.c</code>).
+              <a href="https://iprsoftwaremedia.com/219/files/20242/65f8a8713d6332055d371a0e_nvidia-blackwell-architecture-image/nvidia-blackwell-architecture-image_mid.jpg" target="_blank" rel="noopener">Source: Nvidia Newsroom</a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <p class="dropcap">
+          On June 12th 2025 Chenggang Zhao, a systems engineer at the Hangzhou artificial-intelligence laboratory DeepSeek who posts on GitHub under the handle <code>LyricZhao</code>, left a terse note on pull request <code>#112</code> in the company’s open-source <a href="https://github.com/deepseek-ai/DeepGEMM/pull/112" target="_blank" rel="noopener"><code>deepseek-ai/DeepGEMM</code></a> code repository: “We don’t have SM100 GPUs.” In Nvidia’s internal shorthand, <code>SM100</code> stands for Blackwell, the chipmaker’s newest and most powerful generation of graphics processing units, or GPUs. Under American export controls imposed in October 2022 and tightened a year later, neither DeepSeek nor any other firm in China was supposed to lay hands on them.
+        </p>
+
+        <p>
+          For Washington’s national-security establishment, keeping those chips out of China was not merely a trade dispute. It was the central bet of American AI strategy: that denying Beijing frontier silicon would preserve an enduring technological lead for the United States and its allies. When DeepSeek’s engineers publicly admitted they lacked Blackwell hardware, hawks in Washington took it as a sign the blockade was holding.
+        </p>
+
+        <p>
+          That confidence soon cracked. Within months, Chinese laboratories released a wave of models whose capabilities rivalled Silicon Valley’s best, triggering alarm inside the White House and a bitter internal debate over whether the export regime was leaking or simply obsolete. On December 10th 2025, <em>The Information</em> reported that DeepSeek was developing its next-generation model on several thousand restricted Blackwell chips routed through third-country data centres.
+        </p>
+
+        <p>
+          Two months later, on February 23rd 2026, <em>Reuters</em> correspondents Steve Holland and Alexandra Alper reported that a senior American official had accused DeepSeek of training an upcoming model on a Blackwell cluster inside Inner Mongolia. The claim exposed deep divisions inside the Trump administration itself, pitting sceptics such as White House AI Czar David Sacks and Nvidia chief executive Jensen Huang—who questioned whether hardware bans could stop determined rivals—against security hawks demanding tougher enforcement.
+        </p>
+
+        <p>
+          Soon the paper trail pointed beyond China’s borders to booming cloud corridors across Southeast Asia. In March 2026, <em>Wall Street Journal</em> reporters Jon Emont and Liza Lin revealed that roughly 36,000 Blackwell <code>B200</code> chips worth more than $2.5bn were being installed in Malaysia, through infrastructure partner Aolani Cloud, for TikTok’s Beijing-headquartered parent ByteDance. Then on July 22nd, <em>Bloomberg</em> reported that Michael Kratsios, Director of the White House Office of Science and Technology Policy, had publicly accused Beijing startup Moonshot AI of training its 2.8-trillion-parameter <code>Kimi K3</code> model on Blackwell <code>GB300</code> servers accessed through Thailand, alongside claims of large-scale distillation against Anthropic’s <em>Fable</em> model. Treasury Secretary Scott Bessent warned that sanctions and enforcement actions were “on the table”.
+        </p>
+
+        <p>
+          Yet for all the public recriminations, Washington produced no technical evidence tying Chinese frontier models to Blackwell silicon. That silence left cloud operators, chipmakers, and investors guessing whether the allegations rested on intelligence or speculation.
+        </p>
+
+        <p>
+          On November 12th 2026, Will DePue, a researcher at Unemployment Labs, supplied the missing forensic link (<a href="https://unemploymentlabs.com/checkpoint-forensics" target="_blank" rel="noopener">Unemployment Labs report</a>; <a href="https://x.com/willdepue/status/2120992457630326841" target="_blank" rel="noopener">post on X</a>). Working solely from publicly released model weights—the billions of adjustable parameters that govern a neural network’s behaviour—Mr DePue found compelling statistical signatures that six frontier models released since April 2026 by DeepSeek, Moonshot AI, MiniMax, and Ant Group were initialized on export-controlled Blackwell hardware. Across five training runs, he estimated, those four Chinese labs had tapped roughly 12,000 Blackwell GPUs, the computational equivalent of 30,000 previous-generation Nvidia <code>H100</code> chips, representing more than half a billion dollars in silicon for the final runs alone.
+        </p>
+
+        <blockquote class="pullquote">
+          “The weights also cannot reveal who owned the chips or where they were located. Blackwell systems can be rented from data centers outside China. The evidence concerns access to the hardware; by itself, it does not establish that chips were smuggled into China or that an export-control violation occurred.”
+          <footer>— Will DePue, <em>Unemployment Labs</em>, November 12th 2026</footer>
+        </blockquote>
+
+        <p>
+          Three days later, Washington moved to render that distinction moot. On November 15th, the Department of Commerce’s Bureau of Industry and Security, or BIS, issued a 132-page Interim Final Rule, abbreviated IFR, titled <a href="https://media.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener"><em>Addressing Remote Access to Advanced Semiconductors</em></a> and carrying Regulation Identifier Number <code>RIN 0694-AK50</code>. Taking effect immediately upon Federal Register publication with a 60-day comment window, the rule overhauls the Export Administration Regulations—the EAR—that govern American dual-use trade.
+        </p>
+
+        <p>
+          The rule’s origins reflect the intense bureaucratic struggle behind the scenes. Trade lawyers at WilmerHale—including partners Joshua Geltzer, David Horn, Barry Hurewitz, Marik String, and Neena Shenai—noted in a <a href="https://www.wilmerhale.com/en/insights/client-alerts/20261117-us-government-restricts-remote-access-to-advanced-ai-chips-and-formally-rescinds-the-ai-diffusion-rule" target="_blank" rel="noopener">November 17th legal alert</a> that when BIS unveiled the regulation under Under Secretary Jeffrey Kessler’s signature, its announcement took the extraordinary step of declaring the rule “written by and at the direction of the Department of Treasury and the National Security Council”. Seldom has an export-control agency distanced itself so pointedly from its own text.
+        </p>
+
+        <p>
+          For data-centre landlords from Johor and Bangkok to São Paulo, the stakes are immediate. Firms that invested billions on the assumption that renting cloud compute across borders was lawful now have 90 days to secure a Washington license or pull the plug on Chinese clients. Even the legal lexicon has been recast: under Executive Order 14434, <em>Inaugurating the Era of Super Intelligence</em>, the rule scrubs “Artificial Intelligence” from the new text in favour of “Super Intelligence”, or SI.
+        </p>
+
+        <p>
+          Beneath that rebranding sits a four-part strategy. First, the rule imposes a worldwide end-use ban on overseas data centres supplying frontier-scale compute to Chinese and other arms-embargoed entities, carving out only non-generative recommendation engines. Second, it wraps five fast-growing transit hubs—Indonesia, Malaysia, Singapore, Brazil, and Thailand—in new shipping-license requirements, sparing only American-headquartered buyers whose suppliers file monthly reports. Third, it tightens gatekeeping at semiconductor foundries and chip packagers. Finally, it buries the Biden administration’s suspended “AI Diffusion Rule” once and for all.
+        </p>
+
+        <h2 id="forensics">The ghost in the weights: how 148 and 152 cores gave the game away</h2>
+
+        <p>
+          To understand why Treasury and the National Security Council forced BIS into the cloud, it helps to see what Mr DePue found inside China’s open weights.
+        </p>
+
+        <p>
+          Before a neural network can learn from training data, its billions of parameters need random starting numbers. In PyTorch, the open-source framework behind most frontier models, Nvidia’s <code>cuRAND</code> software library generates those numbers using a deterministic algorithm called Philox. Feed Philox the same starting integer—a “seed”—and it yields the exact same sequence every time.
+        </p>
+
+        <p>
+          To fill billions of weights in fractions of a second, PyTorch spreads Philox’s workload across parallel worker threads on the GPU, assigning up to 2,048 threads to each Streaming Multiprocessor, or SM—the physical compute cores on an Nvidia chip. Thread 0 fills position 1, thread 1 fills position 2, and so on across all <em>N</em> threads on the chip; thread 0 then loops back to position <em>N</em> + 1, then 2<em>N</em> + 1.
+        </p>
+
+        <p>
+          Because each Nvidia chip family packs a different number of cores, that spatial stride stamps the weights with a distinct hardware birthmark. Hopper chips—the <code>H100 SXM</code>, <code>H200</code>, and China-compliant <code>H800</code>—have 132 SMs, giving 270,336 threads. Blackwell <code>B200</code> and <code>B300</code> chips have 148 SMs, giving 303,104 threads. Grace-Blackwell <code>GB200</code> and <code>GB300</code> superchips have 152 SMs, giving 311,296 threads.
+        </p>
+
+        <div class="figure-block">
+          <div class="figure-grid">
+            <figure>
+              <div class="figure-frame">
+                <img src="images/nvidia-h100.jpg" alt="Nvidia Hopper H100 GPU module">
+              </div>
+              <figcaption>
+                <strong>The 132-SM generation:</strong> Nvidia’s Hopper <code>H100</code> SXM GPU shares a 132-SM, 270,336-thread initialization signature with the <code>H200</code> and the China-modified <code>H800</code> found in pre-April 2026 Chinese models such as <code>DeepSeek-V3</code> and <code>Kimi K2.5</code>.
+                <a href="https://www.nvidia.com/content/dam/en-zz/Solutions/gtcs22/data-center/h100/h100-og.jpg" target="_blank" rel="noopener">Source: Nvidia</a>
+              </figcaption>
+            </figure>
+            <figure>
+              <div class="figure-frame">
+                <img src="images/nvidia-gb200-superchip.jpg" alt="Nvidia GB200 Grace Blackwell Superchip board">
+              </div>
+              <figcaption>
+                <strong>The 152-SM leap:</strong> Nvidia’s <code>GB200</code> Grace Blackwell Superchip pairs two 152-SM Blackwell GPUs—311,296 threads each, matching <code>DeepSeek-V4-Pro</code>, Moonshot AI’s <code>Kimi K3</code> and <code>K3.1-Pro</code>, and Ant Group’s <code>Ling-3.1-flash</code>—with an Arm-based Grace central processing unit, or CPU.
+                <a href="https://iprsoftwaremedia.com/219/files/20242/65f7d13f3d633238773719fe_NVIDIA-GB200-Grace-Blackwell-Superchip/NVIDIA-GB200-Grace-Blackwell-Superchip_mid.jpg" target="_blank" rel="noopener">Source: Nvidia Newsroom</a>
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <p>
+          Training does not erase this starting pattern. Vocabulary rows reserved for symbols that never appear during training stay untouched, preserving their initial values bit for bit. Even in heavily trained layers, higher starting values still correlate slightly with higher final values across millions of parameters, registering a correlation of <em>r</em> = 0.066—57 standard deviations, or 57σ—across 42 layers of <code>DeepSeek-V4-Flash</code>.
+        </p>
+
+        <p>
+          Scanning roughly 6 trillion combinations of 32-bit seeds and thread layouts, where random noise should reach at most 8σ, Mr DePue’s team tested their method against 24 control models with publicly disclosed hardware. Every single reading matched, from Meta’s <code>Llama 3.1</code> on 132-SM <code>H100</code>s and EleutherAI’s <code>Pythia</code> models on 108-SM <code>A100</code>s to Zyphra’s <code>ZAYA1</code> on 304-unit AMD <code>MI300X</code>s and Nvidia’s own <code>Nemotron-3 Ultra</code> on 152-SM <code>GB200</code>s. On China’s post-April 2026 releases, the Blackwell matches soared between 49σ and 1,385σ on held-out weights.
+        </p>
+
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-eyebrow">Checkpoint Forensics</div>
+            <h3 class="table-title">Hardware initialization fingerprints in successive Chinese frontier models</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Chinese AI Lab</th>
+                  <th>Pre-April 2026 Models (132-SM Hopper Layout)</th>
+                  <th>Post-April 2026 Models (Blackwell Layout)</th>
+                  <th>Matched Hardware Class</th>
+                  <th>Estimated Cluster Scale (Blackwell GPUs / H100 Equiv.)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>DeepSeek</strong></td>
+                  <td><code>DeepSeek-V2</code>, <code>DeepSeek-V3</code> (Dec 2024; seed <code>953049583</code>)</td>
+                  <td><code>DeepSeek-V4-Flash</code> (Apr 2026; same seed <code>953049583</code>)</td>
+                  <td>148 SMs: Nvidia Blackwell <code>B200 / B300</code></td>
+                  <td>~1,500 Blackwells (~3,500 H100 equiv. over 50 days)</td>
+                </tr>
+                <tr>
+                  <td><strong>DeepSeek</strong></td>
+                  <td><em>(see above)</em></td>
+                  <td><code>DeepSeek-V4-Pro</code> (Apr 2026)</td>
+                  <td>152 SMs: Nvidia Grace-Blackwell <code>GB200 / GB300</code></td>
+                  <td>~3,000 Grace-Blackwells (~7,500 H100 equiv. over 70 days)</td>
+                </tr>
+                <tr>
+                  <td><strong>Moonshot AI</strong></td>
+                  <td><code>Kimi K2</code> (Jul 2025), <code>Kimi K2.5</code> (Jan 2026); plus Jun 2026 <code>K2.7-Code</code> with an 80% Hopper / 20% 148-SM blend</td>
+                  <td><code>Kimi K3</code> (Jul 2026; seed <code>20256586</code>) &amp; <code>Kimi K3.1-Pro</code> (Nov 2026)</td>
+                  <td>152 SMs: Nvidia Grace-Blackwell <code>GB200 / GB300</code></td>
+                  <td>~4,500 Grace-Blackwells (~11,500 H100 equiv. over 70 days)</td>
+                </tr>
+                <tr>
+                  <td><strong>MiniMax</strong></td>
+                  <td><code>MiniMax-Text-01</code> through <code>MiniMax-M2.7</code> (Apr 2026)</td>
+                  <td><code>MiniMax-M3</code> (Jun 2026) &amp; <code>M3.1-Flash</code> (Oct 2026)</td>
+                  <td>148 SMs: Nvidia Blackwell <code>B200 / B300</code></td>
+                  <td>~1,500 Blackwells (~3,500 H100 equiv. over 60 days)</td>
+                </tr>
+                <tr>
+                  <td><strong>Ant Group</strong></td>
+                  <td><code>Ling-1T</code> (Oct 2025), <code>Ling-3.0-flash</code> (Aug 2026)</td>
+                  <td><code>Ling-3.1-flash</code> (Oct 2026), corroborated by Mar 31, 2026 <a href="https://github.com/inclusionAI/cuLA/blob/main/BENCHMARK_GB300.md" target="_blank" rel="noopener"><code>BENCHMARK_GB300.md</code></a> in Ant’s <code>inclusionAI/cuLA</code> repo</td>
+                  <td>152 SMs: Nvidia Grace-Blackwell <code>GB200 / GB300</code></td>
+                  <td>~1,500 Grace-Blackwells (~4,000 H100 equiv. over 100 days)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            Source: Will DePue, Unemployment Labs (Nov 12, 2026). Cluster estimates assume ~20% utilization of peak floating-point operations per second, or FLOPS (25% for DeepSeek), over final training runs only. Readable weights from Alibaba’s <code>Qwen3.8</code>, Zhipu’s <code>GLM-5.3</code>, Tencent’s <code>Hy4-preview</code>, Xiaomi’s <code>MiMo-V2.5-Pro</code>, and StepFun’s <code>Step-5-Preview</code> still show 132-SM Hopper signatures; Meituan’s <code>LongCat-2.0</code> shows no Nvidia signature and cites custom AI Application-Specific Integrated Circuits, or ASICs, with a deleted configuration pointing to Huawei <code>Ascend 910</code> chips.
+          </p>
+        </div>
+
+        <p>
+          Physical tests sealed the finding. Feeding DeepSeek’s seed, <code>953049583</code>, into unmodified PyTorch on an <code>H100</code> reproduced all 57,344 preserved values of <code>DeepSeek-V3</code> bit for bit. Running the same seed on a Blackwell <code>B300</code> reproduced 445 full preserved rows of <code>DeepSeek-V4-Flash</code> bit for bit. On a rented <code>GB200</code>, Moonshot’s seed regenerated all 13 preserved rows of <code>Kimi K3</code>.
+        </p>
+
+        <p>
+          The team even checked whether a partitioned AMD <code>MI300X</code>—an export-controlled rival chip that normally uses 304 compute units—could mimic a 148- or 152-SM Blackwell layout. Across 377 floating-point values where the two vendors round slightly differently, <code>DeepSeek-V4-Flash</code> matched Nvidia 363 times and AMD zero.
+        </p>
+
+        <h2 id="cloud-ban">Pillar 1: Extending export controls to cloud “remote access”</h2>
+
+        <p>
+          Whether those four Chinese labs trained on smuggled servers inside China or over fibre-optic cables to Thailand and Malaysia, Washington’s old rulebook had a glaring blind spot.
+        </p>
+
+        <p>
+          Historically, BIS policed physical goods and data crossing borders: exports out of the United States, reexports between foreign countries, and in-country transfers from one end use or user to another. In prior guidance, the agency explicitly advised that providing computational capacity as a cloud service fell outside the EAR because no commodity, software, or technology was shipped to the user.
+        </p>
+
+        <p>
+          Doubting it held the authority under the Export Control Reform Act of 2018, known as ECRA, BIS had spent years lobbying Congress to pass the Remote Access Security Act to close that cloud gap. Congress never passed the bill. Nudged by Treasury and the National Security Council, BIS asserted the power anyway—a reversal that WilmerHale warns tests the statutory boundaries of ECRA.
+        </p>
+
+        <h3>How the 12,000,000 aggregate TPP threshold works</h3>
+
+        <p>
+          Strikingly, the IFR never defines “remote access”. Instead, it regulates the underlying silicon before and after installation. Exporters and intermediaries may not send controlled SI hardware, software, or technology without a license if they possess “knowledge”—which under the EAR includes awareness of a high probability or willful blindness—that a data centre anywhere on Earth will supply more than 12,000,000 “aggregate TPP” of computing power to or for an entity headquartered, or with an ultimate parent headquartered, in Macau or Country Group D:5, Washington’s roster of two dozen arms-embargoed nations including China, Russia, Iran, Belarus, and North Korea.
+        </p>
+
+        <p>
+          Those compute limits rely on BIS’s Total Processing Performance, or TPP, metric—calculated as twice a chip’s peak tera multiply-accumulate operations per second, <code>MacTOPS</code>, multiplied by bit length. On the Commerce Control List, or CCL, controlled hardware carries five-character Export Control Classification Numbers, or ECCNs.
+        </p>
+
+        <p>
+          The centerpiece entry, <code>ECCN 3A090</code>, covers flagship datacentre chips such as Nvidia’s <code>H100</code>, <code>B200</code>, <code>B300</code>, <code>GB200</code>, and <code>GB300</code> under <code>3A090.a</code>—chips hitting 4,800 TPP or more, or 1,600 TPP with high compute density—alongside mid-tier accelerators under <code>3A090.b</code>. High-Bandwidth Memory, or HBM, classified under <code>3A090.c</code>, is excluded from the new remote-access ban. The restriction sweeps in servers and accelerator boards under <code>ECCN 4A090</code>, related networking and security items tagged with <code>.z</code> suffixes—<code>3A001.z</code>, <code>4A003.z</code>, <code>4A004.z</code>, <code>4A005.z</code>, <code>5A002.z</code>, <code>5A004.z</code>, <code>5A992.z</code>, <code>5D002.z</code>, and <code>5D992.z</code>—and their associated development software and technical know-how under <code>3D001</code>, <code>4D001</code>, <code>4D090</code>, <code>3E001</code>, <code>4E001</code>, <code>5E002</code>, and <code>5E992</code>.
+        </p>
+
+        <div class="figure-block">
+          <figure>
+            <div class="figure-frame">
+              <img src="images/nvidia-gb200-nvl72.jpg" alt="Nvidia GB200 NVL72 liquid-cooled rack-scale system">
+            </div>
+            <figcaption>
+              <strong>Data-centre scale:</strong> Nvidia’s liquid-cooled <code>GB200 NVL72</code> rack (<code>ECCN 4A090.a</code>) links 72 Blackwell GPUs and 36 Grace CPUs as a single unified accelerator. Just five to ten such racks cross Washington’s new 12,000,000 aggregate TPP remote-access limit.
+              <a href="https://iprsoftwaremedia.com/219/files/20242/202403180530/65f7d1913d633238713719f6_NVIDIA-GB200-NVL72/NVIDIA-GB200-NVL72_mid.jpg" target="_blank" rel="noopener">Source: Nvidia Newsroom</a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <p>
+          Aggregate TPP simply sums the TPP of all controlled chips or servers in a cluster. As WilmerHale points out, 12,000,000 aggregate TPP is a strikingly low tripwire—less than half the volume exporters could ship license-free as a “low-volume” order under the scrapped AI Diffusion Rule. On modern Blackwell <code>B200</code> or <code>GB200</code> processors, 12m aggregate TPP means roughly 300 to 750 chips. Every single Chinese Blackwell run identified by Mr DePue clears that bar several times over.
+        </p>
+
+        <p>
+          Five legal hooks make the restriction nearly impossible to route around. First, unlike the rule’s shipping controls for Southeast Asia and Brazil, the remote-access ban <strong>contains no carve-out</strong> for overseas data centres operated by American-headquartered companies. A U.S. hyperscaler running clusters in Frankfurt, Tokyo, or Johor faces the exact same 12m-TPP cap when serving Chinese clients as any local landlord.
+        </p>
+
+        <p>
+          Second, cloud operators cannot split a Chinese training job across separate halls or campuses. The 12m-TPP limit aggregates compute across “linked data centres”—any two or more facilities joined by physical or digital networking infrastructure to share resources, balance workloads, and replicate data as a unified whole.
+        </p>
+
+        <p>
+          Third, the rule reaches middlemen and codifies an earlier 50% threshold. It bars serving a non-D:5 customer if the data centre knows that customer is training SI models for, or supplying models to, a D:5 or Macau firm. In a companion update to existing advanced-chip end-use controls, BIS codifies its May 31st 2026 guidance barring shipments outside national-security Country Groups D:1 and D:4, arms-embargoed Group D:5, and close-ally Groups A:5 and A:6 whenever a D:5 or Macau entity is the buyer or the exclusive or primary remote end user consuming more than 50% of total compute. Companies already out of compliance are bluntly invited to file a Voluntary Self-Disclosure, or VSD, to mitigate penalties.
+        </p>
+
+        <p>
+          Fourth, changing clients mid-stream now counts as a regulated export. If a foreign data centre buys servers lawfully and later switches them to providing more than 12m aggregate TPP to a D:5 client, that pivot legally constitutes an in-country transfer requiring a BIS license—even if the operator had no part in importing the gear. Shippers moving hardware without a license must also warn recipients in writing of this obligation and instruct them to follow BIS’s Know Your Customer, or KYC, vetting standards.
+        </p>
+
+        <p>
+          Finally, silence counts as guilt. Suppliers must obtain documentation of a foreign data centre’s KYC checks into direct or indirect Macau or D:5 ownership; if a facility refuses or cannot verify compliance, that stonewalling triggers a “red flag” that presumptively establishes knowledge of a violation. Nor can foreign server builders hide behind the EAR’s <em>de minimis</em> rules, which normally exempt foreign-made products containing small shares of American content, whenever they know a server is headed for a banned data-centre use.
+        </p>
+
+        <h3>The 90-day ultimatum and the “commercial recommender” contradiction</h3>
+
+        <p>
+          In May 2026, BIS told legitimate data-centre operators they could keep using already-installed hardware “until further notice”. That grace period is over. Any facility already providing a “significant volume of compute power” to Macau or D:5 firms before the rule’s publication has 90 days to secure a BIS license or cut them off.
+        </p>
+
+        <p>
+          To spare consumer apps—such as ByteDance’s Malaysian buildout for TikTok or overseas servers run by Chinese e-commerce giants—the IFR exempts compute supplied <strong>exclusively</strong> for a “commercial recommender system” that ranks, filters, or suggests products, services, or content based on user behaviour or item attributes. That relief comes with a strict poison pill: the system must <strong>not</strong> generate novel text, images, audio, video, software, or other content, nor incorporate a generative model. Providers relying on the carve-out must file client names, total TPP, and KYC diligence via BIS’s portal (<a href="https://www.bis.gov/ai/exclusionnotesubmission" target="_blank" rel="noopener"><code>bis.gov/ai/exclusionnotesubmission</code></a>) for review by the interagency End-User Review Committee, or ERC.
+        </p>
+
+        <div class="callout-box">
+          <div class="callout-title">WilmerHale’s Three Drafting Ambiguities for the 60-Day Comment Window</div>
+          <p>
+            <strong>Per-customer vs. facility-wide TPP:</strong> The regulatory text bars supplying more than 12m aggregate TPP “to or for <em>companies</em>” in Macau or D:5—leaving unclear whether a data centre triggers the cap only when a single D:5 client crosses 12m TPP, or when all D:5 clients combined do.
+          </p>
+          <p>
+            <strong>Undefined “significant” compute:</strong> The 90-day licensing clock applies to data centres already supplying a “significant volume of compute power,” without defining “significant” or specifying which prohibition the new licenses authorize against.
+          </p>
+          <p>
+            <strong>A glaring contradiction on recommender systems:</strong> While the commercial recommender exception states that the remote-access ban does not apply once reported to BIS, the preamble warns that facilities serving recommender systems remotely have 90 days “but must obtain a license following expiration of this period to continue these services.”
+          </p>
+        </div>
+
+        <h2 id="gang-of-five">Pillar 2: The Gang of Five—Indonesia, Malaysia, Singapore, Brazil, and Thailand</h2>
+
+        <p>
+          If the remote-access ban polices who logs into a server rack, the rule’s second pillar polices where those racks can go in the first place—aiming directly at the Southeast Asian hubs highlighted in the ByteDance and Moonshot disclosures.
+        </p>
+
+        <p>
+          Under revised Regional Stability, or RS, controls—export rules designed to protect regional military balances and American foreign policy—BIS now requires a license to ship, reexport, or transfer advanced SI chips, servers, and associated software or technology to or within Indonesia, Malaysia, Singapore, Brazil, and Thailand, regardless of end use.
+        </p>
+
+        <h3>The carve-out for American-headquartered recipients</h3>
+
+        <p>
+          Washington has no desire to stall the overseas buildouts of Microsoft, Google, Amazon Web Services, or Meta. The five-country licensing requirement <strong>does not apply</strong> when the ultimate consignee—the foreign party receiving the shipment—or end user is headquartered, or has an ultimate parent headquartered, in the United States.
+        </p>
+
+        <p>
+          That relief demands rigorous paperwork. By the first business day of the month after any excluded shipment, exporters must log onto BIS’s portal and disclose every transaction party, full parent-company headquarters hierarchies, ECCN classifications, product names, manufacturer Stock Keeping Units, or SKUs, product TPP, quantities, and shipment dates. As WilmerHale advises, American hyperscalers operating in those five hubs will need contractual guarantees that upstream vendors actually file those monthly ledgers, since their license exemption depends on it.
+        </p>
+
+        <p>
+          Local cloud providers and non-American firms in Singapore, Malaysia, Indonesia, Thailand, and Brazil face case-by-case licensing reviews that explicitly grade “the effectiveness of a destination’s export control regimes and coordination with BIS on the enforcement of export controls”. The preamble warns that countries tolerating evasion risk American import curbs, country-group downgrades, and placements on Washington’s Entity List trade blacklist. Under a new “is informed” mechanism, if the Secretary of State or National Security Advisor flags another nation as a diversion risk, the Commerce Secretary has 10 days to weigh slapping controls on it too.
+        </p>
+
+        <p>
+          Elsewhere, BIS retains RS licensing requirements for Country Groups D:1, D:4, and D:5—excluding close allies in Groups A:5 and A:6—and the United Arab Emirates, where approved entities keep license-free access under a July 14th 2026 bilateral rule. Applications for D:1, non-embargoed D:4 destinations, and the United Arab Emirates carry a presumption of approval, while D:5 and Macau face a presumption of denial—preserving only a narrow January 2026 case-by-case window for degraded chips to China or Macau below 21,000 TPP and 6,500 GB/s of total Dynamic Random-Access Memory, or DRAM, bandwidth.
+        </p>
+
+        <h2 id="foundry-gate">Pillar 3: Tightening the screws on foundries and packagers</h2>
+
+        <p>
+          The third pillar tightens a January 2025 rule governing front-end fabricators—contract foundries such as Taiwan Semiconductor Manufacturing Company (TSMC) and Samsung—and Outsourced Semiconductor Assembly and Test firms, known as OSATs, that package raw silicon dies.
+        </p>
+
+        <div class="figure-block">
+          <figure>
+            <div class="figure-frame">
+              <img src="images/nvidia-hgx-platform.jpg" alt="Nvidia HGX eight-GPU server baseboard">
+            </div>
+            <figcaption>
+              <strong>The supply-chain chokepoint:</strong> An Nvidia <code>HGX</code> eight-GPU server baseboard (<code>ECCN 4A090.a</code>). Under the worldwide Advanced Computing Foreign Direct Product, or FDP, rule—making foreign-made chips subject to the EAR when built with American software or gear—BIS stresses that jurisdiction over a <code>3A090</code> chip survives incorporation into a foreign server board.
+              <a href="https://www.nvidia.com/content/dam/en-zz/Solutions/Data-Center/HGX/nvidia-hgx-platform-og-new.jpg" target="_blank" rel="noopener">Source: Nvidia</a>
+            </figcaption>
+          </figure>
+        </div>
+
+        <p>
+          Under existing classification presumptions for <code>ECCN 3A090.a</code>, any logic die fabricated at the 16/14-nanometre node or below—or using non-planar transistor designs such as FinFET—is presumed to be a restricted datacentre processor. Previously, foundries and OSATs could overcome that presumption through a datasheet from an Approved or Authorized IC Designer—the latter covering designers in Taiwan or allied Groups A:1 and A:5 that report specs to BIS, who must apply for full Approved status within 180 days after December 31st 2026.
+        </p>
+
+        <p>
+          Alternatively, for any designer outside Macau and D:5, a foundry or BIS-approved OSAT packaging the chip outside those destinations could clear the chip by attesting from die area or its Graphic Data System, or GDS, layout file that the package held fewer than 30 billion transistors—rising without HBM to 35 billion in 2027 and 40 billion from 2029 onward.
+        </p>
+
+        <p>
+          The new IFR slams that transistor-count backdoor shut for any designer located, or with an ultimate parent headquartered, in Country Groups D:1, D:4, or D:5, or any of the five newly controlled hubs: Indonesia, Malaysia, Singapore, Brazil, and Thailand. Unless such a firm earns Approved or Authorized status, its advanced-node silicon is conclusively treated as <code>3A090.a</code>—and a companion end-use ban bars foundries or OSATs from shipping <code>3A090.a</code> chips designed by unapproved firms to <strong>any destination worldwide</strong> without a BIS license.
+        </p>
+
+        <h2 id="ai-diffusion">Pillar 4: Formal obituary for the “AI Diffusion Rule”</h2>
+
+        <p>
+          Finally, the IFR conducts the formal burial of the Biden administration’s January 15th 2025 <em>Framework for Artificial Intelligence Diffusion</em>—suspended by the Trump White House on May 13th 2025, two days before enforcement, yet left lingering in federal code. BIS scrapes away the worldwide RS license requirement, the three-tier country quota system, License Exceptions Artificial Intelligence Authorization, or AIA, and Low Processing Performance, or LPP, and the October 2024 Data Center Validated End-User, or VEU, framework, returning VEU rules to their pre-2024 baseline. It also deletes every control on AI model weights, wiping out <code>ECCN 4E091</code>, the Model Weights FDP rule, and its accompanying red flag.
+        </p>
+
+        <p>
+          What remains is leaner and sharper. BIS preserves License Exception Advanced Compute Manufacturing, or ACM, to keep supply chains moving outside Macau and D:5, along with existing Notified Advanced Computing, Advanced Computing Authorized, and HBM exceptions—known respectively as NAC, ACA, and HBM—and its May 2025 diversion red-flag guidance. Crucially, the worldwide Advanced Computing FDP rule stays in full force, with BIS warning server makers that American jurisdiction over a foreign-built <code>3A090</code> chip survives even after it is soldered into a foreign <code>4A090</code> or <code>.z</code> server.
+        </p>
+
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-eyebrow">Policy Architecture</div>
+            <h3 class="table-title">How the November 2026 rule reshapes U.S. semiconductor export controls</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Policy Dimension</th>
+                  <th>Biden “AI Diffusion Rule” (Jan 2025 – Rescinded)</th>
+                  <th>New “Remote Access” IFR (<code>RIN 0694-AK50</code>)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Geographic Scope</strong></td>
+                  <td>Worldwide RS license requirement divided into 3 global country tiers</td>
+                  <td>Targeted RS license requirement for Indonesia, Malaysia, Singapore, Brazil, and Thailand + Country Groups D:1, D:4, D:5, and the UAE</td>
+                </tr>
+                <tr>
+                  <td><strong>Treatment of American Hyperscalers Abroad</strong></td>
+                  <td>Relied on Data Centre VEU and License Exception AIA</td>
+                  <td><strong>Exempt</strong> from the 5-country shipping license (via U.S.-parent carve-out), subject to monthly reporting; <em>not</em> exempt from remote-access customer caps</td>
+                </tr>
+                <tr>
+                  <td><strong>Remote / Cloud Access by Chinese (D:5) Firms</strong></td>
+                  <td>Policed indirectly through VEU conditions and national compute caps</td>
+                  <td>Direct worldwide end-use ban on data centres providing &gt;12,000,000 aggregate TPP (single or linked sites) to or for D:5 or Macau firms</td>
+                </tr>
+                <tr>
+                  <td><strong>Commercial Recommender Carve-Out</strong></td>
+                  <td>None explicit</td>
+                  <td><strong>Exempt</strong> if used <em>exclusively</em> for non-generative product or content recommendation and reported to BIS/ERC (subject to preamble 90-day ambiguity)</td>
+                </tr>
+                <tr>
+                  <td><strong>AI Model Weights</strong></td>
+                  <td>Controlled closed model weights under <code>ECCN 4E091</code> and Model Weights FDP rule</td>
+                  <td><strong>Completely revoked</strong> (<code>4E091</code> and Model Weights FDP rule deleted)</td>
+                </tr>
+                <tr>
+                  <td><strong>Foundry / OSAT Transistor-Count Shortcut</strong></td>
+                  <td>Available to designers outside Macau and Country Group D:5</td>
+                  <td><strong>Revoked</strong> for designers in Country Groups D:1, D:4, D:5, Indonesia, Malaysia, Singapore, Brazil, and Thailand (for <code>3A090.a</code> chips)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">
+            Savings &amp; Transition Timelines: Shipments removed from No License Required (<code>NLR</code>) or License Exception eligibility that were physically en route aboard a carrier to a port on the date of Federal Register publication under actual orders may proceed if completed within 30 days. Existing overseas data centres serving D:5 or Macau firms have 90 days to obtain a license. Public comments are due 60 days after publication.
+          </p>
+        </div>
+
+        <p>
+          The irony is hard to miss. The architects of the AI Diffusion Rule feared that open or leaked model weights would hand adversaries a shortcut around American silicon. Instead, when DeepSeek, Moonshot AI, MiniMax, and Ant Group released the open weights of <code>DeepSeek-V4</code>, <code>Kimi K3</code>, <code>MiniMax-M3</code>, and <code>Ling-3.1-flash</code>, those very weights became the forensic confession that exposed their 148-SM and 152-SM Blackwell clusters—and brought Washington’s export-control dragnet crashing down on the global cloud.
+        </p>
+      </div>
+    </main>
+
+    <section class="sources-section" id="sources">
+      <h2>Primary Sources &amp; Technical References</h2>
+      <div class="sources-grid">
+        <div class="source-card">
+          <div class="source-kind">Federal Regulation</div>
+          <strong>BIS Interim Final Rule: Addressing Remote Access to Advanced Semiconductors</strong>
+          <p>U.S. Department of Commerce, Bureau of Industry and Security (<code>RIN 0694-AK50</code>, 132 pages).</p>
+          <a href="https://media.bis.gov/media/documents/rin-0694-ak50.pdf" target="_blank" rel="noopener">View at bis.gov →</a>
+        </div>
+        <div class="source-card">
+          <div class="source-kind">Forensic Research</div>
+          <strong>Top Chinese Frontier AI Models Carry the Fingerprint of Export-Controlled NVIDIA Blackwell GPUs</strong>
+          <p>Will DePue, Unemployment Labs (November 12, 2026). Statistical and physical verification across 148-SM and 152-SM checkpoints.</p>
+          <a href="https://unemploymentlabs.com/checkpoint-forensics" target="_blank" rel="noopener">Read report at unemploymentlabs.com →</a> · <a href="https://x.com/willdepue/status/2120992457630326841" target="_blank" rel="noopener">X thread →</a>
+        </div>
+        <div class="source-card">
+          <div class="source-kind">Legal Analysis</div>
+          <strong>US Government Restricts Remote Access to Advanced AI Chips and Formally Rescinds the AI Diffusion Rule</strong>
+          <p>WilmerHale National Security &amp; International Trade Practice client alert (November 17, 2026).</p>
+          <a href="https://www.wilmerhale.com/en/insights/client-alerts/20261117-us-government-restricts-remote-access-to-advanced-ai-chips-and-formally-rescinds-the-ai-diffusion-rule" target="_blank" rel="noopener">Read alert at wilmerhale.com →</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>© 2026 <a href="../">qq8</a> (qqeight.com) · By qq8 Staff</span>
+      <span>Semiconductor Statecraft &amp; Export Controls</span>
+    </footer>
+  </article>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var fill = document.getElementById("progressFill");
+      var darkBtn = document.getElementById("darkModeBtn");
+      var widthDefaultBtn = document.getElementById("widthDefaultBtn");
+      var widthWideBtn = document.getElementById("widthWideBtn");
+
+      function updateProgress() {
+        var scrollTop = root.scrollTop || document.body.scrollTop;
+        var scrollHeight = root.scrollHeight - root.clientHeight;
+        var pct = scrollHeight > 0 ? Math.min(100, Math.max(0, (scrollTop / scrollHeight) * 100)) : 0;
+        fill.style.width = pct + "%";
+      }
+
+      function syncUI() {
+        var isDark = root.getAttribute("data-theme") === "dark";
+        darkBtn.setAttribute("aria-pressed", isDark ? "true" : "false");
+        darkBtn.textContent = isDark ? "Dark Mode: On" : "Dark Mode";
+
+        var isWide = root.getAttribute("data-width") === "wide";
+        widthDefaultBtn.setAttribute("aria-pressed", isWide ? "false" : "true");
+        widthWideBtn.setAttribute("aria-pressed", isWide ? "true" : "false");
+      }
+
+      darkBtn.addEventListener("click", function () {
+        var nextDark = root.getAttribute("data-theme") !== "dark";
+        if (nextDark) {
+          root.setAttribute("data-theme", "dark");
+        } else {
+          root.removeAttribute("data-theme");
+        }
+        try { localStorage.setItem("qq8-theme", nextDark ? "dark" : "light"); } catch (e) {}
+        syncUI();
+      });
+
+      widthDefaultBtn.addEventListener("click", function () {
+        root.removeAttribute("data-width");
+        try { localStorage.setItem("qq8-width", "default"); } catch (e) {}
+        syncUI();
+        updateProgress();
+      });
+
+      widthWideBtn.addEventListener("click", function () {
+        root.setAttribute("data-width", "wide");
+        try { localStorage.setItem("qq8-width", "wide"); } catch (e) {}
+        syncUI();
+        updateProgress();
+      });
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      syncUI();
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>
